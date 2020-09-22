@@ -10,5 +10,8 @@
     "log"
   ],
   "author": "xinyang",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.29.0"
+  }
 }
