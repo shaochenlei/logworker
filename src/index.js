@@ -59,6 +59,7 @@ if (isMainThread) {
 
         rl.on('line', (line) => {
             let arr = line.split(' ')
+            // extract respondTime
             let respondTime = arr[arr.length - 1]
             // filter out outliers due to random log generator algotithm
             if (parseInt(respondTime) >= 0 && respondTime <= N) {

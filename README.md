@@ -1,9 +1,9 @@
 # LogWorker
-This is a NodeJS implementation of log analytic tool, which read all logs of http respond time and get statistics of the following:   
+This is a NodeJS implementation of log analytic tool, which read all logs of http respond time and get statistics. A typical result is:
 
-1. 90% of requests return a response within X ms        
-2. 95% of requests return a response within Y ms        
-3. 99% of requests return a response within Z ms    
+90% of requests return a response within 757 ms        
+95% of requests return a response within 829 ms        
+99% of requests return a response within 966 ms    
 
 ## Getting Started
 A collection of logs have already been included in /var/log/httpd   
@@ -19,4 +19,11 @@ node ./src/index.js
 ```
 
 ## Multi Thread Design
-To make use of multiple cpu cores to accelerate log manipulation, I created a number of workers (threads) and dispatch logs evenly to them. After all the workers complete the jobs, the main thread collect the results and do a final calculation.
+To make use of multiple cpu cores to accelerate log manipulation, I created a number of workers (threads) and dispatch logs evenly to them. After all the workers complete the jobs, the main thread collect the results and do a final calculation.   
+
+
+## Unit Test
+Unit test of the core util functions are covered.
+```
+yarn test
+```

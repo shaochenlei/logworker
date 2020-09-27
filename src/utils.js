@@ -5,11 +5,13 @@ const hash = (str, size) => {
 
 // merge two arrays with same length
 const merge = (arr1, arr2) => {
+    if(arr1.length !== arr2.length) return arr1
     return arr1.map((v, i) => v + arr2[i])
 }
 
 // get index of preSum array which is equal or greater than x percentage of all values
 const getPercent = (preSum, percent) => {
+    if(percent < 0 || percent > 1) return -1
     const target = Math.floor(preSum[preSum.length - 1] * percent)
     let l = 0, r = preSum.length - 1
     while (l <= r) {
