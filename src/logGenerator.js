@@ -1,9 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const moment = require('moment')
-const logPath = path.resolve(__dirname,'../var/log/httpd')
-
-
+const { LOG_REL_PATH } = require('./constants')
+const logPath = path.resolve(__dirname, LOG_REL_PATH)
 
 const getNumberInNormalDistribution = (mean,std_dev) => {
     return mean+(randomNormalDistribution()*std_dev) 
@@ -22,8 +21,8 @@ const randomNormalDistribution = () => {
 
 
 const gen = (num) => {
-    for(let i = 0; i < num; i++) {
-        const fileName = moment(new Date()).subtract(i,'days').format('YYYY-MM-DD')+'.log'
+    for(let k = 0; k < num; k++) {
+        const fileName = moment(new Date()).subtract(k,'days').format('YYYY-MM-DD')+'.log'
         let content = ''
         const lines = 10000
         for(let i = 0; i < lines; i++) {

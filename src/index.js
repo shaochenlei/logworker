@@ -1,47 +1,17 @@
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads')
+const { hash, merge, getPercent, getPreSum } = require('./utils')
+const { N, LOG_REL_PATH } = require('./constants')
 const os = require('os')
 const fs = require('fs')
 const path = require('path')
 const readline = require('readline')
+
 const threadCount = os.cpus().length
 const threads = new Set()
-const N = 10000
-const LOG_REL_PATH = '../var/log/httpd'
+// initialize log list to be dispatched to workers
 const logsToDispatch = new Array(threadCount)
 for(let i = 0; i < logsToDispatch.length; i++) {
     logsToDispatch[i] = []
-}
-
-const hash = (str) => {
-    return str.substring(str.length-6, str.length-4) % threadCount
-}
-
-const merge = (arr1, arr2) => {
-    return arr1.map((v,i) => v+arr2[i])
-}
-
-const getPercent = (preSum, percent) => {
-    console.log(preSum[preSum.length-1])
-    const target = Math.floor(preSum[preSum.length-1] * percent)
-    let l = 0, r = preSum.length-1
-    while(l <= r) {
-        let mid = l + Math.floor((r-l)/2)
-        if(preSum[mid] < target) {
-            l = mid + 1
-        } else {
-            r = mid-1
-        }
-    }
-    return l
-}
-
-const getPreSum = (arr) => {
-    let preSum = 0
-    return arr.map((v,i) => {
-        let res = v + preSum
-        preSum += v
-        return res
-    })
 }
 
 if(isMainThread) {
@@ -51,17 +21,17 @@ if(isMainThread) {
         
         files.forEach(f => {
             if(!f.endsWith('.log')) return
-            logsToDispatch[hash(f)].push(f)
+            logsToDispatch[hash(f, threadCount)].push(f)
         })
         // create workers
         for(let i = 0; i < threadCount; i++) {
             threads.add(new Worker(__filename, { workerData: { logs:logsToDispatch[i] } }))
         }
         for(let worker of threads) {
-            worker.on('error', (err) => {throw err })
+            worker.on('error', e => {throw e })
             worker.on('exit', () => {
                 threads.delete(worker)
-                // console.log(`Thread exiting, ${threads.size} running...`)
+                // after all workers finish job, print final results
                 if(threads.size === 0) {
                     const preSum = getPreSum(counters)
                     const res90 = getPercent(preSum, 0.9)
@@ -90,15 +60,20 @@ if(isMainThread) {
             rl.on('line', (line) => {
                 let arr = line.split(' ')
                 let respondTime = arr[arr.length-1]
-                if(parseInt(respondTime) > 0) {
+                // filter out outliers due to random log generator algotithm
+                if(parseInt(respondTime) >= 0 && respondTime <= N) {
+                    // accumulate buckets
                     threadRes[respondTime]++
                 }
             })
 
             rl.on('close', () => {
+                // after read of last log, send data to parent
                 if(i === workerData.logs.length-1) {
-                    console.log(threadRes)
-                    parentPort.postMessage(threadRes)
+                    // send data after random milliseconds to avoid race condition
+                    setTimeout(() => {
+                        parentPort.postMessage(threadRes)
+                    }, Math.random() * 300)
                 }
             })
 
