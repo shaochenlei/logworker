@@ -7,7 +7,7 @@ This is a NodeJS implementation of log analytic tool, which read all logs of htt
 
 ## Getting Started
 A collection of logs have already been included in /var/log/httpd   
-If you want to generate by yourself, you can run the following scripts. Notice that you need to install relative modules first by running yarn or npm install
+If you want to generate logs by yourself, you can run the following scripts. Notice that you need to install relative modules first by running yarn or npm install
 ```
 yarn
 node ./src/logGenerator.js
@@ -19,11 +19,11 @@ node ./src/index.js
 ```
 
 ## Multi Thread Design
-To make use of multiple cpu cores to accelerate log manipulation, I created a number of workers (threads) and dispatch logs evenly to them. After all the workers complete the jobs, the main thread collect the results and do a final calculation.   
+To make use of multiple cpu cores to accelerate log manipulation, I created a number of workers (threads) and dispatch logs evenly to them. After all the workers complete the jobs, the main thread collects the results and operate a final calculation.   
 
 
 ## Unit Test
-Unit test of the core util functions are covered.
+Unit test of the core util functions are covered. 
 ```
 yarn test
 ```
