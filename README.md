@@ -27,3 +27,10 @@ Unit test of the core util functions are covered.
 ```
 yarn test
 ```
+
+## Time Complexity
+We dispatch logs for all workers and do linear scanning, which takes O(n).
+
+After the bucket[N] is filled, we calculate the prefix sum array, which takes O(n).
+
+Then we use bianry search to find the right index, since the prefix sum array is guaranteed to be sorted, we do not need to sort again. The binary search takes O(Log(n)).
